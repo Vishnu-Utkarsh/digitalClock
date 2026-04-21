@@ -1,10 +1,9 @@
-module digitalClock (Q_, format, state, seg, an, clk, count, clear, preset, upDown, showHour, speed, next, load, back);
+module digitalClock (format, state, seg, an, clk, count, clear, preset, upDown, showHour, speed, next, load, back);
 
     // Output
     output reg [7:0] seg;
     output reg [3:0] an;
     wire [16:0] Q;
-    output reg [11:0] Q_;
     reg [3:0] digit;
     output reg format;
     input showHour;
@@ -32,7 +31,6 @@ module digitalClock (Q_, format, state, seg, an, clk, count, clear, preset, upDo
 
     // Clock 100 MHz to 1Hz
     always @(posedge clk) begin
-        Q_ = Q[11:0];
 
         set = 0;
         change = 0;
@@ -99,7 +97,7 @@ module digitalClock (Q_, format, state, seg, an, clk, count, clear, preset, upDo
     //Display clock divider
     reg [24:0] refresh_counter = 0;
     wire [1:0] select;
-    assign select = refresh_counter[14:13];
+    assign select = refresh_counter[16:15];
 
     // assign carry[1] = upDown ? Q[5:0] == 6'd59 : Q[5:0] == 6'd0;
     // assign carry[2] = upDown ? Q[11:6] == 6'd59 : Q[11:6] == 6'd0;
@@ -108,9 +106,9 @@ module digitalClock (Q_, format, state, seg, an, clk, count, clear, preset, upDo
         refresh_counter <= refresh_counter + 1;
     end
 
-    modX second(Q[5:0], carry[0], tick_1Hz | set[0], upDown, clear, preset, 6'd60, change, clk);
-    modX minute(Q[11:6], carry[1], carry[0] | set[1], upDown, clear, preset, 6'd60, change, clk);
-    modX hour(Q[16:12], carry[2], carry[1] | set[2], upDown, clear, preset, 6'd24, change, clk);
+    modX second(Q[5:0], carry[0], tick_1Hz | set[0], 1'b1, clear, preset, 6'd60, change);
+    modX minute(Q[11:6], carry[1], carry[0] | set[1], 1'b1, clear, preset, 6'd60, change);
+    modX hour(Q[16:12], carry[2], carry[1] | set[2], 1'b1, clear, preset, 6'd24, change);
 
     always @(*) begin
         // format = (Q[16:12] != 5'd0) || showHour;
@@ -212,7 +210,7 @@ module digitalClock (Q_, format, state, seg, an, clk, count, clear, preset, upDo
 
                     2'b11: begin
                         an = 4'b0111;
-                        digit = Q[11:6] / 10;
+                        digit = Q[16:12] / 10;
                     end
                 endcase
             end
