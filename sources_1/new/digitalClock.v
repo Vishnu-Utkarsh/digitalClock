@@ -1,21 +1,41 @@
-module digitalClock (format, seg, an, clk, reset, showHour, speed, plus, load, switch);
+module digitalClock (seg, an, sound, format, currMode, clk, reset, showHour, speed, minus, plus, load, switch);
 
     // ---------- VARIABLES ----------
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
 
     output reg [6:0] seg;
     output reg [3:0] an;
-    output reg format;
-    reg [3:0] digit, display;
+    output [9:0] sound;
+    output reg format, currMode;
+    reg [3:0] digit;
+    reg [16:0] display;
 
     input clk, reset, speed;
-    input plus, load, switch, showHour;
+    input minus, plus, load, switch, showHour;
 
-    wire [1:0] state;
     wire [16:0] samay;
-    reg [2:0] mode = S0;
+    wire [10:0] alarm;
+    reg switch_r, load_r;
+    reg [1:0] state = S0, mode = S0;
     reg [31:0] freq = 32'd100000000;
 
+    // ---------- MODE ----------
+    always @(posedge clk) begin
+
+        switch_r <= switch;
+        load_r <= load;
+
+        if(switch & ~switch_r) begin
+            mode <= mode + 1;
+            state <= S0;
+        end
+        else if(load & ~load_r) begin
+            if(mode == S1 && state == S2)
+                state <= S0;
+            else
+                state <= state + 1;
+        end
+    end
 
     // ---------- SPEED ----------
     always @(posedge speed) begin
@@ -26,8 +46,8 @@ module digitalClock (format, seg, an, clk, reset, showHour, speed, plus, load, s
     end
 
     // ---------- CLOCK ----------
-    clock Time(samay, state, clk, reset, freq, plus, load);
-
+    clock Time(samay, clk, reset, freq, minus, plus, state, mode);
+    alarm Beep(alarm, sound, clk, reset, samay[16:6], minus, plus, state, mode);
 
     // ---------- DISPLAY ----------
     reg [24:0] refresh_counter = 0;
@@ -40,41 +60,52 @@ module digitalClock (format, seg, an, clk, reset, showHour, speed, plus, load, s
 
     always @(*) begin
         // format = (samay[16:12] != 5'd0) || showHour;
-        format = showHour;
+        format = showHour || mode == S1;
+
+        case (mode)
+
+            S0: display = samay;
+            S1: display[16:6] = alarm;
+            default display = samay;
+        endcase
 
         case (state)
 
             S0: begin
                 case(select)
 
-                    2'b00: begin
+                    S0: begin
                         an = 4'b1110;
+                        currMode = ! (mode == S0);
                         if(format)
-                            digit = samay[11:6] % 10;
+                            digit = display[11:6] % 10;
                         else
-                            digit = samay[5:0] % 10;
+                            digit = display[5:0] % 10;
                     end
 
-                    2'b01: begin
+                    S1: begin
                         an = 4'b1101;
+                        currMode = ! (mode == S1);
                         if(format)
-                            digit = samay[11:6] / 10;
+                            digit = display[11:6] / 10;
                         else
-                            digit = samay[5:0] / 10;
+                            digit = display[5:0] / 10;
                     end
 
-                    2'b10: begin
+                    S2: begin
                         an = 4'b1011;
+                        currMode = ! (mode == S2);
                         if(format)
-                            digit = samay[16:12] % 10;
+                            digit = display[16:12] % 10;
                         else
                             digit = 4'hA;
                     end
 
-                    2'b11: begin
+                    S3: begin
                         an = 4'b0111;
+                        currMode = ! (mode == S3);
                         if(format)
-                            digit = samay[16:12] / 10;
+                            digit = display[16:12] / 10;
                         else
                             digit = 4'hA;
                     end
@@ -84,28 +115,32 @@ module digitalClock (format, seg, an, clk, reset, showHour, speed, plus, load, s
             S1: begin
                 case(select)
 
-                    2'b00: begin
+                    S0: begin
                         an = 4'b1110;
-                        digit = samay[11:6] % 10;
+                        currMode = ! (mode == S0);
+                        digit = display[11:6] % 10;
                     end
 
-                    2'b01: begin
+                    S1: begin
                         an = 4'b1101;
-                        digit = samay[11:6] / 10;
+                        currMode = ! (mode == S1);
+                        digit = display[11:6] / 10;
                     end
 
-                    2'b10: begin
+                    S2: begin
                         an = 4'b1011;
+                        currMode = ! (mode == S2);
                         if(refresh_counter[24])
-                            digit = samay[16:12] % 10;
+                            digit = display[16:12] % 10;
                         else
                             digit = 4'hF;
                     end
 
-                    2'b11: begin
+                    S3: begin
                         an = 4'b0111;
+                        currMode = ! (mode == S3);
                         if(refresh_counter[24])
-                            digit = samay[16:12] / 10;
+                            digit = display[16:12] / 10;
                         else
                             digit = 4'hF;
                     end
@@ -115,30 +150,34 @@ module digitalClock (format, seg, an, clk, reset, showHour, speed, plus, load, s
             S2: begin
                 case(select)
 
-                    2'b00: begin
+                    S0: begin
                         an = 4'b1110;
+                        currMode = ! (mode == S0);
                         if(refresh_counter[24])
-                            digit = samay[11:6] % 10;
+                            digit = display[11:6] % 10;
                         else
                             digit = 4'hF;
                     end
 
-                    2'b01: begin
+                    S1: begin
                         an = 4'b1101;
+                        currMode = ! (mode == S1);
                         if(refresh_counter[24])
-                            digit = samay[11:6] / 10;
+                            digit = display[11:6] / 10;
                         else
                             digit = 4'hF;
                     end
 
-                    2'b10: begin
+                    S2: begin
                         an = 4'b1011;
-                        digit = samay[16:12] % 10;
+                        currMode = ! (mode == S2);
+                        digit = display[16:12] % 10;
                     end
 
-                    2'b11: begin
+                    S3: begin
                         an = 4'b0111;
-                        digit = samay[16:12] / 10;
+                        currMode = ! (mode == S3);
+                        digit = display[16:12] / 10;
                     end
                 endcase
             end
@@ -146,24 +185,33 @@ module digitalClock (format, seg, an, clk, reset, showHour, speed, plus, load, s
             S3: begin
                 case(select)
 
-                    2'b00: begin
+                    S0: begin
                         an = 4'b1110;
+                        currMode = ! (mode == S0);
                         if(refresh_counter[24])
-                            digit = samay[5:0] % 10;
+                            digit = display[5:0] % 10;
                         else
                             digit = 4'hF;
                     end
 
-                    2'b01: begin
+                    S1: begin
                         an = 4'b1101;
+                        currMode = ! (mode == S1);
                         if(refresh_counter[24])
-                            digit = samay[5:0] / 10;
+                            digit = display[5:0] / 10;
                         else
                             digit = 4'hF;
                     end
 
-                    default: begin
-                        an = 4'b0011;
+                    S2: begin
+                        an = 4'b1011;
+                        currMode = ! (mode == S2);
+                        digit = 4'hA;
+                    end
+
+                    S3: begin
+                        an = 4'b0111;
+                        currMode = ! (mode == S3);
                         digit = 4'hA;
                     end
                 endcase
@@ -188,4 +236,5 @@ module digitalClock (format, seg, an, clk, reset, showHour, speed, plus, load, s
             default: seg = 7'b1111110; // -
         endcase
     end
+
 endmodule

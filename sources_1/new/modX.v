@@ -1,13 +1,13 @@
-module modX(value, carry, tick_1Hz, upDown, clear, MOD, load);
+module modX(value, carry, tick, upDown, clear, MOD, load);
 
     output reg [5:0] value;
     output reg carry;
     input [5:0] MOD;
-    input tick_1Hz, clear, upDown;
+    input tick, clear, upDown;
     input load;
 
     // counter
-    always @(posedge tick_1Hz or posedge clear) begin
+    always @(posedge tick or posedge clear) begin
 
         carry <= 1'b0;
         if (clear)
@@ -44,4 +44,5 @@ module modX(value, carry, tick_1Hz, upDown, clear, MOD, load);
             endcase
         end
     end
+
 endmodule
