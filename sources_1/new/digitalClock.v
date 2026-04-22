@@ -1,27 +1,20 @@
-module digitalClock (format, seg, an, clk, count, reset, showHour, speed, plus, load, switch);
+module digitalClock (format, seg, an, clk, reset, showHour, speed, plus, load, switch);
 
     // ---------- VARIABLES ----------
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
 
-    // Output
     output reg [6:0] seg;
     output reg [3:0] an;
     output reg format;
     reg [3:0] digit, display;
 
-    // Clock
-    wire [16:0] samay, alarm;
-    reg samay_1Hz = 1'b0;
-    reg [2:0] samay_set = S0, mode = S0;
-    reg [31:0] clock_div = 0, freq = 32'd100000000;
-    wire [3:0] clock_Carry;
-    input clk, count, reset, speed;
-
-    // Load
+    input clk, reset, speed;
     input plus, load, switch, showHour;
-    reg load_r, plus_r;
-    reg [1:0] state = S0;
-    reg change = 0;
+
+    wire [1:0] state;
+    wire [16:0] samay;
+    reg [2:0] mode = S0;
+    reg [31:0] freq = 32'd100000000;
 
 
     // ---------- SPEED ----------
@@ -32,94 +25,8 @@ module digitalClock (format, seg, an, clk, count, reset, showHour, speed, plus, 
             freq = 32'd100000000;
     end
 
-
     // ---------- CLOCK ----------
-    always @(posedge clk) begin
-
-        load_r <= load;
-        plus_r <= plus;
-
-        if (reset) begin
-            clock_div <= 0;
-            samay_1Hz <= 0;
-            change <= 0;
-            samay_set <= 0;
-        end
-
-        else begin
-        case(state)
-
-            // Clock 100 MHz to 1Hz
-            S0: begin
-
-                if (clock_div >= freq) begin // d100000000
-                    clock_div <= 0;
-                    samay_1Hz <= 1;
-                end
-                else begin
-                    samay_1Hz <= 0;
-                    clock_div <= clock_div + 1;
-                end
-
-                change <= 0;
-                samay_set <= 0;
-            end
-
-            // Load Hour
-            S1: begin
-
-                if(plus & ~plus_r) begin
-                    change <= 1'b1;
-                    samay_set <= 3'b100;
-                end
-                else begin
-                    change <= 0;
-                    samay_set <= 0;
-                end
-                clock_div <= 0;
-            end
-
-            // Load Minute
-            S2: begin
-
-                if(plus & ~plus_r) begin
-                    change <= 1'b1;
-                    samay_set <= 3'b010;
-                end
-                else begin
-                    change <= 0;
-                    samay_set <= 0;
-                end
-                clock_div <= 0;
-            end
-
-            // Load Second
-            S3: begin
-
-                if(plus & ~plus_r) begin
-                    change <= 1'b1;
-                    samay_set <= 3'b001;
-                end
-                else begin
-                    change <= 0;
-                    samay_set <= 0;
-                end
-                clock_div <= 0;
-            end
-        endcase
-
-        if(load & ~load_r)
-            state <= state + 1;
-        end
-    end
-
-
-    // ---------- OBJECTS ----------
-    modX second(samay[5:0], clock_Carry[0], samay_1Hz | samay_set[0], 1'b1, reset, 6'd60, change);
-    modX minute(samay[11:6], clock_Carry[1], clock_Carry[0] | samay_set[1], 1'b1, reset, 6'd60, change);
-    modX hour(samay[16:12], clock_Carry[2], clock_Carry[1] | samay_set[2], 1'b1, reset, 6'd24, change);
-
-    // clock Time(samay, state, clk, count, reset, freq, plus, load);
+    clock Time(samay, state, clk, reset, freq, plus, load);
 
 
     // ---------- DISPLAY ----------
