@@ -1,4 +1,4 @@
-module display(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm);
+module display(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm, chronometer);
 
     // ---------- VARIABLES ----------
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
@@ -9,7 +9,7 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
 
     input clk, showHour;
     input [1:0] state, mode;
-    input [16:0] samay;
+    input [16:0] samay, chronometer;
     input [10:0] alarm;
 
     reg [3:0] digit;
@@ -30,6 +30,7 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
 
             S0: display = samay;
             S1: display[16:6] = alarm;
+            S2: display = chronometer;
             default display = samay;
         endcase
 

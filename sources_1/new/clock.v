@@ -9,11 +9,9 @@ module clock(value, clk, reset, freq, minus, plus, state, mode);
     input [31:0] freq;
 
     wire [2:0] clock_Carry;
-    reg tick_1Hz = 1'b0;
+    reg tick_1Hz = 1'b0, change = 1'b0, plus_r;
     reg [2:0] set = S0;
     reg [31:0] clock_div = 0;
-    reg plus_r;
-    reg change = 0;
 
     // ---------- CLOCK ----------
     always @(posedge clk) begin
@@ -107,7 +105,7 @@ module clock(value, clk, reset, freq, minus, plus, state, mode);
     end
 
 
-    // ---------- OBJECTS ----------
+    // ---------- COUNTERS ----------
     modX second(value[5:0], clock_Carry[0], tick_1Hz | set[0], 1'b1, reset, 6'd60, change);
     modX minute(value[11:6], clock_Carry[1], clock_Carry[0] | set[1], 1'b1, reset, 6'd60, change);
     modX hour(value[16:12], clock_Carry[2], clock_Carry[1] | set[2], 1'b1, reset, 6'd24, change);
