@@ -4,7 +4,7 @@ module alarm(value, sound, clk, reset, samay, minus, plus, state, mode);
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
     output reg [10:0] value = 0;
     output [9:0] sound;
-    reg alarm;
+    reg alarm = 1'b0;
 
     input clk, reset, minus, plus;
     input [1:0] state, mode;
@@ -60,10 +60,13 @@ module alarm(value, sound, clk, reset, samay, minus, plus, state, mode);
     // ---------- ALARM BEEP ----------
     always @(posedge samay[0] or posedge plus) begin
 
+        // Alarm turned OFF by user
         if(plus)
             alarm <= 1'b0;
+        // Alarm Time matches
         else if(value && value == samay)
             alarm <= 1'b1;
+        // Alarm Ends
         else
             alarm <= 1'b0;
     end
