@@ -9,11 +9,15 @@ module alarm(value, beep, reset, samay, minus, plus, state, mode);
     input [1:0] state, mode;
     input [10:0] samay;
 
+    reg pause = 1'b0;
+
     // ---------- SET ALARM ----------
     always @(posedge reset or posedge plus) begin
 
-        if (reset)
+        if (reset) begin
             value <= 0;
+            pause <= 1'b0;
+        end
 
         else if(mode == S1) begin
             case(state)
@@ -36,16 +40,22 @@ module alarm(value, beep, reset, samay, minus, plus, state, mode);
     end
 
     // ---------- ALARM BEEP ----------
-    always @(posedge samay[0] or posedge plus or posedge reset) begin
+    always @(*) begin
 
-        if(reset || plus)
+        if(plus) begin
+            pause <= 1'b1;
             beep <= 1'b0;
-        if(plus)
+        end
+        else if(value && value == samay) begin
+            if(pause)
+                beep <= 1'b0;
+            else
+                beep <= 1'b1;
+        end
+        else begin
+            pause <= 1'b0;
             beep <= 1'b0;
-        else if(value && value == samay)
-            beep <= 1'b1;
-        else
-            beep <= 1'b0;
+        end
     end
 
 endmodule

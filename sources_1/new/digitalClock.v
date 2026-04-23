@@ -40,7 +40,7 @@ module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, spe
     // ---------- OBJECTS ----------
     clock Time(samay, clk, reset, freq, minus, plus, state, mode);
     alarm Alarm(alarm, beep, reset, samay[16:6], minus, plus, state, mode);
-    stopwatch chrono(chronometer, clk, reset, freq, plus, mode);
+    stopwatch chrono(chronometer, clk, reset | load, freq, plus, mode);
     display show(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm, chronometer);
 
     // ---------- 0.5 Hz Divider ----------
@@ -59,6 +59,7 @@ module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, spe
         end
     end
 
+    // ---------- LIGHTNING ----------
     Johnson left(light [9:5], tick, reset || (! beep));
     Johnson right(light [4:0], tick, reset || (! beep));
 

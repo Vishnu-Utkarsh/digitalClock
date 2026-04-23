@@ -21,7 +21,7 @@ module stopwatch(value, clk, reset, freq, plus, mode);
         if (reset) begin
             clock_div <= 0;
             tick_1Hz <= 0;
-            pause <= 0;
+            pause <= 1'b1;
         end
 
         else begin
