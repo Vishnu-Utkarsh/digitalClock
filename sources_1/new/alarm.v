@@ -16,8 +16,12 @@ module alarm(value, sound, clk, reset, samay, minus, plus, state, mode);
 
 
     // ---------- 0.5 Hz Divider ----------
-    always @(posedge clk) begin
-        if (clock_div >= 32'd50000000) begin
+    always @(posedge clk or posedge reset) begin
+        if(reset) begin
+            clock_div <= 0;
+            tick <= 0;
+        end
+        else if (clock_div >= 32'd50000000) begin
             clock_div <= 0;
             tick <= 1;
         end
@@ -27,46 +31,44 @@ module alarm(value, sound, clk, reset, samay, minus, plus, state, mode);
         end
     end
 
-    // ---------- ALARM ----------
+    // ---------- SET ALARM ----------
     always @(posedge reset or posedge plus) begin
 
-        if (reset) begin
-            clock_div <= 0;
+        if (reset)
             value <= 0;
-        end
 
         else if(mode == S1) begin
             case(state)
 
                 S1: begin
-                //     if(plus) begin
-                        if(value[10:6] >= 5'd23)
-                            value[10:6] <= 5'd0;
-                        else
-                            value [10:6] <= value [10:6] + 1;
-                //     end
+                    if(value[10:6] >= 5'd23)
+                        value[10:6] <= 5'd0;
+                    else
+                        value [10:6] <= value [10:6] + 1;
                 end
 
                 S2: begin
-                //     if(plus) begin
-                        if(value[5:0] >= 6'd59)
-                            value[5:0] <= 6'd0;
-                        else
-                            value [5:0] <= value [5:0] + 1;
-                //     end
+                    if(value[5:0] >= 6'd59)
+                        value[5:0] <= 6'd0;
+                    else
+                        value [5:0] <= value [5:0] + 1;
                 end
             endcase
         end
     end
 
-    always @(posedge samay[0]) begin
+    // ---------- ALARM BEEP ----------
+    always @(posedge samay[0] or posedge plus) begin
 
-        if(value && value == samay)
+        if(plus)
+            alarm <= 1'b0;
+        else if(value && value == samay)
             alarm <= 1'b1;
         else
             alarm <= 1'b0;
     end
 
-    Johnson left(sound [9:5], tick, reset);
-    Johnson right(sound [4:0], tick, reset);
+    Johnson left(sound [9:5], tick, reset | !alarm);
+    Johnson right(sound [4:0], tick, reset | !alarm);
+
 endmodule
