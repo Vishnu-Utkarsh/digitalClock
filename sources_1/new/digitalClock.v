@@ -10,12 +10,13 @@ module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, spe
 
     input clk, reset, showHour, speed, minus, plus, load, switch;
 
-    wire beep;
-    wire [16:0] samay, chronometer;
+    wire beep, beep1, beep2;
+    wire [18:0] samay, timekeeper, chronometer;
     wire [10:0] alarm;
     reg tick = 1'b0;
     reg [1:0] state = S0, mode = S0;
     reg [31:0] freq = 32'd100000000, clock_div = 32'd0;
+    assign beep = beep1 | beep2;
 
     // ---------- MODE ----------
     always @(posedge switch)
@@ -39,9 +40,10 @@ module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, spe
 
     // ---------- OBJECTS ----------
     clock Time(samay, clk, reset, freq, minus, plus, state, mode);
-    alarm Alarm(alarm, beep, reset, samay[16:6], minus, plus, state, mode);
-    stopwatch chrono(chronometer, clk, reset | load, freq, plus, mode);
-    display show(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm, chronometer);
+    alarm Alarm(alarm, beep1, reset, samay[18:7], minus, plus, state, mode);
+    stopwatch Chrono(chronometer, clk, reset | load, freq, plus, mode);
+    timer TickTick(timekeeper, beep2, clk, reset, freq, minus, plus, state, mode);
+    display Show(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm, chronometer, timekeeper);
 
     // ---------- 0.5 Hz Divider ----------
     always @(posedge clk or posedge reset) begin

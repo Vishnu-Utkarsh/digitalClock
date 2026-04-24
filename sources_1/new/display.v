@@ -1,4 +1,4 @@
-module display(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm, chronometer);
+module display(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm, chronometer, timekeeper);
 
     // ---------- VARIABLES ----------
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
@@ -9,11 +9,11 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
 
     input clk, showHour;
     input [1:0] state, mode;
-    input [16:0] samay, chronometer;
+    input [18:0] samay, timekeeper, chronometer;
     input [10:0] alarm;
 
     reg [3:0] digit;
-    reg [16:0] display;
+    reg [18:0] display;
     reg [24:0] refresh_counter = 0;
     wire [1:0] select;
     assign select = refresh_counter[18:17];
@@ -28,10 +28,10 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
 
         case (mode)
 
-            S0: display = samay;
-            S1: display[16:6] = alarm;
-            S2: display = chronometer;
-            default display = samay;
+            S0: display[18:0] = samay;
+            S1: display[17:7] = alarm;
+            S2: display[18:0] = chronometer;
+            S3: display[18:0] = timekeeper;
         endcase
 
         case (state)
@@ -43,25 +43,25 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                         an = 4'b1110;
                         currMode = ! (mode == S0);
                         if(format)
-                            digit = display[11:6] % 10;
+                            digit = display[12:7] % 10;
                         else
-                            digit = display[5:0] % 10;
+                            digit = display[6:0] % 10;
                     end
 
                     S1: begin
                         an = 4'b1101;
                         currMode = ! (mode == S1);
                         if(format)
-                            digit = display[11:6] / 10;
+                            digit = display[12:7] / 10;
                         else
-                            digit = display[5:0] / 10;
+                            digit = display[6:0] / 10;
                     end
 
                     S2: begin
                         an = 4'b1011;
                         currMode = ! (mode == S2);
                         if(format)
-                            digit = display[16:12] % 10;
+                            digit = display[18:13] % 10;
                         else
                             digit = 4'hA;
                     end
@@ -70,7 +70,7 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                         an = 4'b0111;
                         currMode = ! (mode == S3);
                         if(format)
-                            digit = display[16:12] / 10;
+                            digit = display[18:13] / 10;
                         else
                             digit = 4'hA;
                     end
@@ -83,20 +83,20 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                     S0: begin
                         an = 4'b1110;
                         currMode = ! (mode == S0);
-                        digit = display[11:6] % 10;
+                        digit = display[12:7] % 10;
                     end
 
                     S1: begin
                         an = 4'b1101;
                         currMode = ! (mode == S1);
-                        digit = display[11:6] / 10;
+                        digit = display[12:7] / 10;
                     end
 
                     S2: begin
                         an = 4'b1011;
                         currMode = ! (mode == S2);
                         if(refresh_counter[24])
-                            digit = display[16:12] % 10;
+                            digit = display[18:13] % 10;
                         else
                             digit = 4'hF;
                     end
@@ -105,7 +105,7 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                         an = 4'b0111;
                         currMode = ! (mode == S3);
                         if(refresh_counter[24])
-                            digit = display[16:12] / 10;
+                            digit = display[18:13] / 10;
                         else
                             digit = 4'hF;
                     end
@@ -119,7 +119,7 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                         an = 4'b1110;
                         currMode = ! (mode == S0);
                         if(refresh_counter[24])
-                            digit = display[11:6] % 10;
+                            digit = display[12:7] % 10;
                         else
                             digit = 4'hF;
                     end
@@ -128,7 +128,7 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                         an = 4'b1101;
                         currMode = ! (mode == S1);
                         if(refresh_counter[24])
-                            digit = display[11:6] / 10;
+                            digit = display[12:7] / 10;
                         else
                             digit = 4'hF;
                     end
@@ -136,13 +136,13 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                     S2: begin
                         an = 4'b1011;
                         currMode = ! (mode == S2);
-                        digit = display[16:12] % 10;
+                        digit = display[18:13] % 10;
                     end
 
                     S3: begin
                         an = 4'b0111;
                         currMode = ! (mode == S3);
-                        digit = display[16:12] / 10;
+                        digit = display[18:13] / 10;
                     end
                 endcase
             end
@@ -154,7 +154,7 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                         an = 4'b1110;
                         currMode = ! (mode == S0);
                         if(refresh_counter[24])
-                            digit = display[5:0] % 10;
+                            digit = display[6:0] % 10;
                         else
                             digit = 4'hF;
                     end
@@ -163,7 +163,7 @@ module display(seg, an, format, currMode, clk, showHour, state, mode, samay, ala
                         an = 4'b1101;
                         currMode = ! (mode == S1);
                         if(refresh_counter[24])
-                            digit = display[5:0] / 10;
+                            digit = display[6:0] / 10;
                         else
                             digit = 4'hF;
                     end

@@ -1,8 +1,8 @@
 module modX(value, carry, tick, upDown, clear, MOD, load);
 
-    output reg [5:0] value;
+    output reg [6:0] value;
     output reg carry;
-    input [5:0] MOD;
+    input [6:0] MOD;
     input tick, clear, upDown;
     input load;
 
