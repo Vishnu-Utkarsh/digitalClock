@@ -10,6 +10,7 @@ DIGITALCLOCK.srcs/
 │   ├── clock.v             ← Clock Module
 │   ├── alarm.v             ← Alarm Module
 │   ├── stopWatch.v         ← StopWatch module
+│   ├── timer.v             ← Timer module
 │   └── JohnsonCounter.v    ← Dynamic Light effect for alert
 │   └── modX.v              ← Counter with a given MOD value
 ├── constrns_1/new/
@@ -40,6 +41,10 @@ Up Button (T16) - Change Mode (Clock, Alarm, Stopwatch, Timer)
 
 Down Button (U17) - change clock speed (or frequency) (1x, 10x, 100x, 1000x)
 
+LED (L1) - Show current time format information
+
+LED (P1) - Show Alarm status (ON/OFF)
+
 
 ### Clock
 
@@ -48,6 +53,8 @@ Center Button (U18) - Switch between time adjust modes (hour, minute, second)
 Right Button (T17) - Adjust time (hour, minute, second)
 
 switch (R2) - Toggle Time Format (HH:MM, SS)
+
+switch (R1) - Alarm On/Off
 
 
 ### Alarm

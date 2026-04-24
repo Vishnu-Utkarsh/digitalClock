@@ -6,8 +6,8 @@ set_property PACKAGE_PIN W5 [get_ports clk]
 	create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
  
 ## Switches
-# set_property PACKAGE_PIN V17 [get_ports {count}]
-# 	set_property IOSTANDARD LVCMOS33 [get_ports {count}]
+# set_property PACKAGE_PIN V17 [get_ports {toggleAlarm}]
+# 	set_property IOSTANDARD LVCMOS33 [get_ports {toggleAlarm}]
 set_property PACKAGE_PIN V16 [get_ports {reset}]
 	set_property IOSTANDARD LVCMOS33 [get_ports {reset}]
 # set_property PACKAGE_PIN W16 [get_ports {upDown}]
@@ -34,8 +34,8 @@ set_property PACKAGE_PIN V16 [get_ports {reset}]
 	# set_property IOSTANDARD LVCMOS33 [get_ports {value[0]}]
 # set_property PACKAGE_PIN U1 [get_ports {value[1]}]					
 	# set_property IOSTANDARD LVCMOS33 [get_ports {value[1]}]
-# set_property PACKAGE_PIN T1 [get_ports {value[2]}]					
-	# set_property IOSTANDARD LVCMOS33 [get_ports {value[2]}]
+set_property PACKAGE_PIN T1 [get_ports {toggleAlarm}]					
+	set_property IOSTANDARD LVCMOS33 [get_ports {toggleAlarm}]
 set_property PACKAGE_PIN R2 [get_ports {showHour}]					
  	set_property IOSTANDARD LVCMOS33 [get_ports {showHour}]
  
@@ -77,11 +77,11 @@ set_property PACKAGE_PIN V3 [get_ports {light[5]}]
 	# set_property IOSTANDARD LVCMOS33 [get_ports {led[12]}]
 # set_property PACKAGE_PIN N3 [get_ports {state[0]}]
 # 	set_property IOSTANDARD LVCMOS33 [get_ports {state[0]}]
-# set_property PACKAGE_PIN P1 [get_ports {state[1]}]
-# 	set_property IOSTANDARD LVCMOS33 [get_ports {state[1]}]
+set_property PACKAGE_PIN P1 [get_ports {alarmOut}]
+	set_property IOSTANDARD LVCMOS33 [get_ports {alarmOut}]
 set_property PACKAGE_PIN L1 [get_ports {format}]
 	set_property IOSTANDARD LVCMOS33 [get_ports {format}]
-	
+
 	
 ##7 segment display
 set_property PACKAGE_PIN W7 [get_ports {seg[6]}]					
@@ -123,9 +123,3 @@ set_property PACKAGE_PIN T17 [get_ports plus]
 	set_property IOSTANDARD LVCMOS33 [get_ports plus]
 set_property PACKAGE_PIN U17 [get_ports speed]						
 	set_property IOSTANDARD LVCMOS33 [get_ports speed]
-
-##USB-RS232 Interface
-#set_property PACKAGE_PIN B18 [get_ports RsRx]						
-	#set_property IOSTANDARD LVCMOS33 [get_ports RsRx]
-#set_property PACKAGE_PIN A18 [get_ports RsTx]						
-	#set_property IOSTANDARD LVCMOS33 [get_ports RsTx]

@@ -1,4 +1,4 @@
-module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, speed, minus, plus, load, switch);
+module digitalClock (seg, an, light, format, alarmOut, currMode, clk, reset, toggleAlarm, showHour, speed, minus, plus, load, switch);
 
     // ---------- VARIABLES ----------
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
@@ -6,9 +6,9 @@ module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, spe
     output [6:0] seg;
     output [3:0] an;
     output [9:0] light;
-    output format, currMode;
+    output format, alarmOut, currMode;
 
-    input clk, reset, showHour, speed, minus, plus, load, switch;
+    input clk, reset, toggleAlarm, showHour, speed, minus, plus, load, switch;
 
     wire beep, beep1, beep2;
     wire [18:0] samay, timekeeper, chronometer;
@@ -16,7 +16,9 @@ module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, spe
     reg tick = 1'b0;
     reg [1:0] state = S0, mode = S0;
     reg [31:0] freq = 32'd100000000, clock_div = 32'd0;
+
     assign beep = beep1 | beep2;
+    assign alarmOut = toggleAlarm;
 
     // ---------- MODE ----------
     always @(posedge switch)
@@ -40,7 +42,7 @@ module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, spe
 
     // ---------- OBJECTS ----------
     clock Time(samay, clk, reset, freq, minus, plus, state, mode);
-    alarm Alarm(alarm, beep1, reset, samay[17:7], minus, plus, state, mode);
+    alarm Alarm(alarm, beep1, reset, toggleAlarm, samay[17:7], minus, plus, state, mode);
     stopwatch Chrono(chronometer, clk, reset | load, freq, plus, mode);
     timer TickTick(timekeeper, beep2, clk, reset, freq, minus, plus, state, mode);
     display Show(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm, chronometer, timekeeper);
