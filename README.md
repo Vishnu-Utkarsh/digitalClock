@@ -10,7 +10,7 @@ DIGITALCLOCK.srcs/
 │   ├── clock.v             ← Clock Module
 │   ├── alarm.v             ← Alarm Module
 │   ├── stopWatch.v         ← StopWatch module
-│   └── JohnsonCounter.v    ← Dynamic Light effect for alert
+│   └── JohnsonCounter.v    ← Dynamic Light effect for alert as an alternative of alarm sound
 │   └── modX.v              ← Counter with a given MOD value
 ├── constrns_1/new/
 │   └── kernel.xdc          ← Basys3 pin constraints
@@ -26,7 +26,6 @@ DIGITALCLOCK.srcs/
 - Timer functionality to trigger an alert to measure time interval
 - Optional Speed Control to adjust the clock's ticking speed for testing purposes
 - Dot below 7-Segment Display to represent current mode (Time, ALarm, Stopwatch, Timer)
-- Dynamic Light effect for alert at alarm and countdown trigger
 - Toggle between time format (HH:MM, SS)
 <!-- - Toggle between 24-hour and 12-hour time formats -->
 
@@ -40,34 +39,16 @@ Up Button (T16) - Change Mode (Clock, Alarm, Stopwatch, Timer)
 
 Down Button (U17) - change clock speed (or frequency) (1x, 10x, 100x, 1000x)
 
-
 ### Clock
 
-Center Button (U18) - Switch between time adjust modes (hour, minute, second)
+Center Button (U18) - Switch between time setting modes (hour, minute, second)
 
 Right Button (T17) - Adjust time (hour, minute, second)
 
 switch (R2) - Toggle Time Format (HH:MM, SS)
-
 
 ### Alarm
 
 Center Button (U18) - Switch between time setting modes (hour, minute)
 
 Right Button (T17) - Adjust alarm time (hour, minute) other than 00:00
-                   - Turn off Alarm
-
-
-### Stopwatch
-
-Center Button (U18) - Reset Stopwatch time (00:00:00)
-
-Right Button (T17) - Pause Stopwatch time counter at instance
-
-
-### Timer
-
-Center Button (U18) - Switch between timer adjust modes (hour, minute, second)
-
-Right Button (T17) - Adjust timer countdown duration (hour, minute, second)
-                   - Start/Pause Timer - Turn off Alert
