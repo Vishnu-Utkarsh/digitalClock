@@ -7,15 +7,18 @@ DIGITALCLOCK.srcs/
 ├── sources_1/new/
 │   ├── digitalClock.v      ← main code: handles User Interface
 │   ├── display.v           ← 4-digit multiplexed 7-segment driver
+│   |── JohnsonCounter.v    ← Dynamic Light effect for alert
+│   |── modX.v              ← Counter with a given MOD value
 │   ├── clock.v             ← Clock Module
 │   ├── alarm.v             ← Alarm Module
 │   ├── stopWatch.v         ← StopWatch module
-│   ├── timer.v             ← Timer module
-│   └── JohnsonCounter.v    ← Dynamic Light effect for alert
-│   └── modX.v              ← Counter with a given MOD value
+│   └── timer.v             ← Timer module
+|
 ├── constrns_1/new/
 │   └── kernel.xdc          ← Basys3 pin constraints
+|
 ├── digitalClock.bit        ← BitStream File to be Programmed on Basys3 FPGA Board
+|
 └── README.md
 ```
 
