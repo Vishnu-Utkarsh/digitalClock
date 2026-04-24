@@ -64,6 +64,8 @@ Center Button (U18) - Reset Stopwatch time (00:00:00)
 
 Right Button (T17) - Pause Stopwatch time counter at instance
 
+switch (R2) - Toggle Time Format (MM:SS, centiSeconds:centiSeconds)
+
 
 ### Timer
 
@@ -71,3 +73,5 @@ Center Button (U18) - Switch between timer adjust modes (hour, minute, second)
 
 Right Button (T17) - Adjust timer countdown duration (hour, minute, second)
                    - Start/Pause Timer - Turn off Alert
+
+switch (R2) - Toggle Time Format (HH:MM, SS)

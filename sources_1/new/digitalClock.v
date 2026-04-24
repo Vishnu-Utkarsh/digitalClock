@@ -40,7 +40,7 @@ module digitalClock (seg, an, light, format, currMode, clk, reset, showHour, spe
 
     // ---------- OBJECTS ----------
     clock Time(samay, clk, reset, freq, minus, plus, state, mode);
-    alarm Alarm(alarm, beep1, reset, samay[18:7], minus, plus, state, mode);
+    alarm Alarm(alarm, beep1, reset, samay[17:7], minus, plus, state, mode);
     stopwatch Chrono(chronometer, clk, reset | load, freq, plus, mode);
     timer TickTick(timekeeper, beep2, clk, reset, freq, minus, plus, state, mode);
     display Show(seg, an, format, currMode, clk, showHour, state, mode, samay, alarm, chronometer, timekeeper);

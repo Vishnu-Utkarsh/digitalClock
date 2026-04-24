@@ -11,7 +11,7 @@ module timer(value, beep, clk, reset, freq, minus, plus, state, mode);
 
     wire [2:0] clock_Carry;
     reg tick_1Hz = 1'b0, change = 1'b0, pause = 1'b1, plus_r;
-    reg [16:0] prev;
+    reg [18:0] prev;
     reg [2:0] set = 0;
     reg [31:0] clock_div = 0;
 
