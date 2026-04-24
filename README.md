@@ -1,7 +1,21 @@
-# Digital Clock
-## Implemented Digital Clock (24 hr) on FPGA (basys 3) board using Vivado
+# Digital Clock - Basys3
 
-### Features:
+## Project Structure:
+DIGITALCLOCK.srcs/
+├── sources_1/new/
+│   ├── digitalClock.v      ← main code: handles User Interface
+│   ├── display.v           ← 4-digit multiplexed 7-segment driver
+│   ├── clock.v             ← Clock Module
+│   ├── alarm.v             ← Alarm Module
+│   ├── stopWatch.v         ← StopWatch module
+│   └── JohnsonCounter.v    ← Dynamic Light as an alternative of alarm sound
+│   └── modX.v              ← Counter with a given MOD value
+├── constrns_1/new/
+│   └── kernel.xdc          ← Basys3 pin constraints
+├── digitalClock.bit        ← BitStream File to be Programmed on Basys3 FPGA Board
+└── README.md
+
+## Features:
 - Display current time in HH:MM:SS format on seven-segment displays
 - ALU to perform time calculations (incrementing seconds, minutes, hours)
 - Asynchronous reset to set time back to 00:00:00
@@ -10,7 +24,7 @@
 - Optional Speed Control to adjust the clock's ticking speed for testing purposes
 <!-- - Toggle between 24-hour and 12-hour time formats -->
 
-### Controls:
+## Controls:
 
 Up Button (T16) - Change Mode (Clock, Alarm, Stopwatch, Timer)
 Right Button (T17) - Increment time (seconds, minutes, hours)
