@@ -1,11 +1,11 @@
-module alarm(value, beep, reset, toggleAlarm, samay, minus, plus, state, mode);
+module alarm(value, beep, reset, toggleAlarm, samay, plus, state, mode);
 
     // ---------- VARIABLES ----------
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
     output reg [10:0] value = 0;
     output reg beep = 1'b0;
 
-    input reset, toggleAlarm, minus, plus;
+    input reset, toggleAlarm, plus;
     input [1:0] state, mode;
     input [10:0] samay;
 

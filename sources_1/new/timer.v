@@ -1,11 +1,11 @@
-module timer(value, beep, clk, reset, freq, minus, plus, state, mode);
+module timer(value, beep, clk, reset, freq, plus, state, mode);
 
     // ---------- VARIABLES ----------
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
     output [18:0] value;
     output reg beep = 1'b0;
 
-    input clk, reset, minus, plus;
+    input clk, reset, plus;
     input [1:0] state, mode;
     input [31:0] freq;
 
@@ -131,7 +131,6 @@ module timer(value, beep, clk, reset, freq, minus, plus, state, mode);
             endcase
         end
     end
-
 
     // ---------- COUNTERS ----------
     modX second(value[6:0], clock_Carry[0], tick_1Hz | set[0], 1'b0, reset, 7'd60, change);

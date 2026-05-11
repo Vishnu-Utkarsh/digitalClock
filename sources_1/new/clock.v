@@ -1,10 +1,10 @@
-module clock(value, clk, reset, freq, minus, plus, state, mode);
+module clock(value, clk, reset, freq, plus, state, mode);
 
     // ---------- VARIABLES ----------
     parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10, S3 = 2'b11;
     output [18:0] value;
 
-    input clk, reset, minus, plus;
+    input clk, reset, plus;
     input [1:0] state, mode;
     input [31:0] freq;
 
